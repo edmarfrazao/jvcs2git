@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  jvcs2git.props - configuracao comum dos .dproj do jvcs2git (src\jvcs2git.dproj
+  e src\jvcs2git-cli.dproj), para abrir e compilar na IDE (Delphi 13).
+
+  - JvcsRoot: $(JVCS_ROOT) se definido (so desenvolvimento local, na mesma tag
+    do submodulo), senao external\JEDI_VCS (submodulo).
+  - Importa $(JvcsRoot)\tools\msbuild\JediVCS2026.props (versao do Delphi,
+    pastas de JCL/ICS/Abbrevia do GetIt, namespaces, SkipResGeneration).
+  - Saidas proprias: bin\$(Platform)\$(Config) e dcu\$(Platform)\$(Config)\<projeto>
+    (nao usar JvcsOutDir/JvcsDcuDir/JvcsPostRuntime, que apontam para dentro
+    do submodulo).
+  - O .res (VERSIONINFO/manifesto) e gerado no Pre-Build com o brcc32.
+  Mantenha defines e caminhos iguais aos do tools\compilar.bat.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <J2GRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..'))</J2GRoot>
+    <JvcsRoot Condition="'$(JVCS_ROOT)'!=''">$(JVCS_ROOT)</JvcsRoot>
+    <JvcsRoot Condition="'$(JvcsRoot)'==''">$(J2GRoot)\external\JEDI_VCS</JvcsRoot>
+  </PropertyGroup>
+
+  <Import Project="$(JvcsRoot)\tools\msbuild\JediVCS2026.props" Condition="Exists('$(JvcsRoot)\tools\msbuild\JediVCS2026.props')"/>
+
+  <PropertyGroup>
+    <J2GUnitPath>$(JvcsRoot)\src\common;$(JvcsRoot)\src\common\client;$(JvcsRoot)\src\comp\midware;$(JvcsRoot)\src\comp\crc;$(JvcsRoot)\src\comp\mwtools</J2GUnitPath>
+    <J2GLibDcu>$(JvcsJclDir)\lib\$(JvcsJclLib)\$(Platform);$(JvcsIcsDir)\Lib\$(Config)\$(Platform)\$(JvcsBdsVer);$(JvcsAbbreviaDir)\packages\11AndAbove\Delphi\$(Platform)\$(Config)</J2GLibDcu>
+    <J2GLibInc>$(JvcsJclDir)\source\include;$(JvcsJclDir)\source\include\jedi;$(JvcsIcsDir)\Source\Include</J2GLibInc>
+    <J2GLibRes>$(JvcsIcsDir)\Source;$(JvcsAbbreviaDir)\source;$(BDS)\lib\$(Platform)\release</J2GLibRes>
+    <J2GDefines>DelphiPersonalEdition;JVCSCONSOLECLIENT;BRANCHING;OVERBYTEV6_UP</J2GDefines>
+    <J2GOutDir>$(J2GRoot)\bin\$(Platform)\$(Config)</J2GOutDir>
+    <J2GDcuDir>$(J2GRoot)\dcu\$(Platform)\$(Config)\$(MSBuildProjectName)</J2GDcuDir>
+    <J2GPostBuild>if /i "$(Platform)"=="Win32" copy /y "$(JvcsRoot)\3rdparty\fvcscrypt.dll" "$(J2GOutDir)\" &gt;nul
+exit /b 0</J2GPostBuild>
+  </PropertyGroup>
+
+  <Target Name="J2GCheckRoot" BeforeTargets="Build;Make;Compile">
+    <Error Condition="!Exists('$(JvcsRoot)\tools\msbuild\JediVCS2026.props')"
+           Text="JEDI_VCS nao encontrado em $(JvcsRoot): rode git submodule update --init ou defina JVCS_ROOT"/>
+  </Target>
+</Project>

@@ -1,0 +1,10 @@
+/* jvcs2git - numeros e textos de versao (fonte unica dos dois .rc).
+   Para subir a versao, altere so este arquivo e o CHANGELOG.md. */
+
+#define J2G_VER_FILEVERSION        0,1,0,1
+#define J2G_VER_PRODUCTVERSION     0,1,0,0
+#define J2G_VER_FILEVERSION_STR    "0.1.0.1\000"
+#define J2G_VER_PRODUCTVERSION_STR "0.1.0\000"
+#define J2G_VER_COPYRIGHT_STR      "Copyright (C) 2026 Edmar Frazao - MPL 1.1\000"
+#define J2G_VER_PRODUCTNAME_STR    "jvcs2git\000"
+#define J2G_VER_COMMENTS_STR       "JEDI VCS to Git exporter. Source: github.com/edmarfrazao/jvcs2git\000"

@@ -1,0 +1,13 @@
+/bin/
+/dcu/
+*.dcu
+*.local
+*.identcache
+*.dsk
+*.stat
+*.~*
+__history/
+__recovery/
+/src/*.res
+/tools/logs/
+/release/

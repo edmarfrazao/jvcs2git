@@ -1,0 +1,13 @@
+root = true
+
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+[*.{pas,dpr,inc,rc,rh,dfm,bat}]
+charset = latin1
+indent_style = space
+indent_size = 2
+
+[*.{md,ps1,dproj,props}]
+charset = utf-8

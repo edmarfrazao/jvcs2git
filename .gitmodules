@@ -1,0 +1,3 @@
+[submodule "external/JEDI_VCS"]
+	path = external/JEDI_VCS
+	url = https://github.com/edmarfrazao/JEDI_VCS.git

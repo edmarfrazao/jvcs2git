@@ -1,0 +1,33 @@
+/* jvcs2git-cli.exe (console): so VERSIONINFO. O jvcs2git-cli.res (fora do git)
+   e gerado por tools\compilar.bat (ou pelo Pre-Build da IDE) com brcc32. */
+
+#include "jvcs2git-ver.rh"
+
+1 VERSIONINFO LOADONCALL MOVEABLE DISCARDABLE IMPURE
+FILEVERSION J2G_VER_FILEVERSION
+PRODUCTVERSION J2G_VER_PRODUCTVERSION
+FILEFLAGSMASK 0x3F
+FILEFLAGS 0x0
+FILEOS VOS__WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "jvcs2git\000"
+   VALUE "FileDescription", "jvcs2git console\000"
+   VALUE "FileVersion", J2G_VER_FILEVERSION_STR
+   VALUE "ProductVersion", J2G_VER_PRODUCTVERSION_STR
+   VALUE "InternalName", "jvcs2git-cli\000"
+   VALUE "OriginalFilename", "jvcs2git-cli.exe\000"
+   VALUE "LegalCopyright", J2G_VER_COPYRIGHT_STR
+   VALUE "ProductName", J2G_VER_PRODUCTNAME_STR
+   VALUE "Comments", J2G_VER_COMMENTS_STR
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x0409,1252
+ }
+}
