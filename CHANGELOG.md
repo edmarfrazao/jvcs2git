@@ -5,7 +5,7 @@ Todas as mudanças relevantes do **jvcs2git**. Formato baseado em
 
 ## [Não publicado]
 
-## [0.1.0] — em preparação
+## [0.1.0] — 2026-10-20
 
 Primeira versão. Unidades do JEDI VCS: submódulo `external/JEDI_VCS` na tag `v2.5.0.2026-beta6-build2063` (`65908e1`).
 
