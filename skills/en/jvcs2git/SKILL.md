@@ -88,7 +88,7 @@ revision. Reasons (`reason`):
   JEDI VCS client (Properties → Crypt) or to use `-encodekey-file <file>` himself (outside the output folder)
   and run again (with `-force`, after approval). Never ask for the key.
 - `crcMismatch`: the downloaded content does not match the server CRC. Warn; `-ignorecrc` only with approval.
-- `noBlob`: the server has no content (size 0). Just report.
+- `noBlob`: the server returned no content (missing blob; a 0-byte file is not `noBlob`, it is written empty). Just report.
 - `noMembers`: revision without rows in the history. Just report.
 - `noCommit`: label without any emitted commit (tag not created). Just report.
 - `dfmNotConverted`: binary `.dfm` that could not be converted to text; stored binary. Just report.

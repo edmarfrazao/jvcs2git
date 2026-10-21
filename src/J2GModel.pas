@@ -51,7 +51,7 @@ const
   J2G_REASON_DFMFAILED  = 'dfmNotConverted';
 
   J2G_PRODUCT = 'jvcs2git';
-  J2G_VERSION = '0.1.0';    // keep equal to src\jvcs2git-ver.rh
+  J2G_VERSION = '0.1.1';    // keep equal to src\jvcs2git-ver.rh
   J2G_URL = 'https://github.com/edmarfrazao/jvcs2git';
   J2G_MIDWARE_NOTICE = 'This product is based on MidWare. Freeware source code is available at http://www.overbyte.be.';
 

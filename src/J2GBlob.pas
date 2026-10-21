@@ -63,7 +63,8 @@ type
     // for the report when not rsOk. Updates AReport.Current.BlobsDownloaded,
     // BlobsFromCache and BytesDownloaded. Never raises for a per-member
     // problem; raises EJ2GError(9) only when the connection is lost.
-    // Size = 0 -> rsNoBlob; not a ZIP and no (valid) key -> rsEncrypted;
+    // no blob in the server answer -> rsNoBlob (an empty file, size 0, is a
+    // valid member); not a ZIP and no (valid) key -> rsEncrypted;
     // CRC mismatch -> rsCrcMismatch (kept in the cache and rsOk with
     // AIgnoreCrc, plus a warning).
     function Fetch(ARev: TJ2GRevision; AMemberIndex: Integer; out ADetail: string): TJ2GRevStatus;
@@ -345,8 +346,8 @@ begin
   if Assigned(FReport) then
     Rep := FReport.Current;
   Ext := LowerCase(ARev.Members[AMemberIndex].Ext);
-  if ARev.Members[AMemberIndex].Size = 0 then
-    Exit(Done(rsNoBlob, 'size 0 in the module history'));
+  // Size 0 in the history is a real empty file: it is downloaded and written
+  // empty (an absent blob is detected below by the empty server answer)
 
   ForceDirectories(FCacheDir);
   CacheName := IncludeTrailingPathDelimiter(FCacheDir) + IntToStr(ARev.RevisionID) + Ext;

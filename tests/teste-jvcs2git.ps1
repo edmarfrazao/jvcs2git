@@ -1,4 +1,4 @@
-﻿# Testes do jvcs2git-cli.exe contra um servidor JEDI VCS de TESTE (só leitura no servidor).
+﻿# Testes do jvcs2git-cli.exe contra um servidor JEDI VCS de TESTE (só leitura no servidor, exceto o caso 10).
 #
 # Casos (ver doc\pt\Uso.md):
 #   1. pré-condições: identidade, git no PATH, jvcs2git-cli.exe + fvcscrypt.dll, console jvcs.exe (opcional);
@@ -20,6 +20,8 @@
 #      recusados na 1ª rodada, cifrados/CRC, que não entram no cache); cache com .tmp
 #      ou tamanho errado é baixado de novo; pasta existente sem -force sai 12; -force numa pasta que não foi
 #      gerada pelo jvcs2git sai 12 e não apaga nada
+#  10. arquivo de 0 bytes (projeto -ProjetoVazio, criado no servidor de TESTE pelo console se faltar) entra
+#      vazio no git, sem 'noBlob'; sai 0; git fsck --strict limpo
 #   +  nenhum caminho do repositório difere de outro só pela caixa (git ls-files | sort -f | uniq -di vazio)
 #
 # Sem console: casos 3, 5 e 6 [PULADO]. Sem git: casos que usam git [PULADO].
@@ -37,6 +39,7 @@ param(
     [string]$Cli = '',                                       # padrão: <repo>\bin\Win32\jvcs2git-cli.exe
     [string]$Projeto = 'exemplo01.dpr',
     [string]$ProjetoLabels = 'ex4ia.dpr',                    # projeto com label (caso 6); '' = só o -Projeto
+    [string]$ProjetoVazio = 'zz-teste-jvcs2git-vazio.dpr',  # caso 10 (criado pelo console se não existir); '' = pula
     [string[]]$ProjetosEsperados = @('exemplo01.dpr=1', 'ex2.dpr=2', 'ex4ia.dpr=3')
 )
 $ErrorActionPreference = 'Stop'
@@ -546,5 +549,48 @@ else {
     Ok ($r.Codigo -eq 12) "sem git no PATH: sai 12 (código $($r.Codigo))"
 }
 
+# ---------------------------------------------------------------- 10. arquivo vazio
+# Projeto zz-teste com um módulo de 0 bytes: ele entra no git vazio, não como "sem blob".
+# Se o projeto não existir no servidor de TESTE, é criado pelo console (addproject/addmodule/checkin).
+Write-Output '==== 10. arquivo vazio'
+if (-not $GitExe) { Pular 'arquivo vazio: sem git' }
+elseif (-not $ProjetoVazio) { Pular 'arquivo vazio: -ProjetoVazio vazio' }
+else {
+    $saidaVazio = Join-Path $Saida 'vazio'
+    if (Test-Path -LiteralPath $saidaVazio) { Remove-Item -LiteralPath $saidaVazio -Recurse -Force }
+    $argsVazio = @($Con) + @('-project', $ProjetoVazio, '-out', $saidaVazio, '-nogroup', '-json')
+    $v = Invoke-J2G $argsVazio
+    if ($v.Codigo -eq 5 -and $temConsole) {
+        $pastaVazio = Join-Path $Saida 'vazio-fonte'
+        New-Item -ItemType Directory -Force $pastaVazio | Out-Null
+        [IO.File]::WriteAllBytes((Join-Path $pastaVazio 'vazio.txt'), [byte[]]@())
+        [IO.File]::WriteAllText((Join-Path $pastaVazio 'cheio.txt'), "conteudo`r`n")
+        $c = Invoke-Console 'vazio_criar' @("addproject $ProjetoVazio ""[zz-teste] jvcs2git arquivo vazio - pode apagar""", "openproject $ProjetoVazio",
+            'addmodule cheio.txt', 'checkin cheio.txt "cheio inicial"', 'addmodule vazio.txt', 'checkin vazio.txt "vazio inicial"') $pastaVazio
+        Info "projeto $ProjetoVazio criado no servidor de teste"
+        if (Test-Path -LiteralPath $saidaVazio) { Remove-Item -LiteralPath $saidaVazio -Recurse -Force }
+        $v = Invoke-J2G $argsVazio
+    }
+    if ($v.Codigo -eq 5) { Pular "arquivo vazio: projeto $ProjetoVazio não existe e não há console para criá-lo" }
+    else {
+        Ok ($v.Codigo -eq 0) "exportação de $ProjetoVazio sai 0, sem pulados (código $($v.Codigo))"
+        $semBlob = @()
+        if ($v.Json) { $semBlob = @(@($v.Json.projects) | ForEach-Object { @($_.skipped) } | Where-Object { $_ -and $_.reason -eq 'noBlob' }) }
+        Ok ($semBlob.Count -eq 0) 'nenhum membro "noBlob" (arquivo de 0 bytes não é tratado como blob ausente)'
+        $repoVazio = if ($v.Json) { Get-RepoDir $v.Json } else { $null }
+        if (-not $repoVazio) { Ok $false 'repositório do projeto vazio no JSON' }
+        else {
+            $ls = Invoke-Git $repoVazio @('ls-files')
+            $caminhoVazio = @($ls.Saida -split "`r?`n" | Where-Object { $_ -match '(^|/)vazio\.txt$' }) | Select-Object -First 1
+            Ok ([bool]$caminhoVazio) "vazio.txt está no repositório ($caminhoVazio)"
+            if ($caminhoVazio) {
+                $s = Invoke-Git $repoVazio @('cat-file', '-s', "main:$caminhoVazio")
+                Ok ($s.Saida.Trim() -eq '0') "vazio.txt tem 0 bytes no git ($($s.Saida.Trim()))"
+            }
+            $f = Invoke-Git $repoVazio @('fsck', '--strict')
+            Ok ($f.Codigo -eq 0) 'git fsck --strict limpo no projeto vazio'
+        }
+    }
+}
 Write-Output "==== OK: $okN  FALHOU: $falhas  PULADO: $pulados"
 if ($falhas -gt 0) { exit 1 } else { exit 0 }

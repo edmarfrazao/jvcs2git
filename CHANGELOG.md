@@ -5,6 +5,16 @@ Todas as mudanças relevantes do **jvcs2git**. Formato baseado em
 
 ## [Não publicado]
 
+## [0.1.1] — 2026-10-20
+
+### Corrigido
+- Arquivo de 0 bytes era pulado como `noBlob` (e o check-in que só tinha ele não virava commit); agora entra
+  vazio no Git. `noBlob` fica só para blob ausente no servidor.
+
+### Testes
+- Caso 10 em `tests\teste-jvcs2git.ps1`: projeto `zz-teste-jvcs2git-vazio.dpr` (criado pelo console no servidor
+  de teste se faltar) com um arquivo vazio; 76 casos.
+
 ## [0.1.0] — 2026-10-20
 
 Primeira versão. Unidades do JEDI VCS: submódulo `external/JEDI_VCS` na tag `v2.5.0.2026-beta6-build2063` (`65908e1`).

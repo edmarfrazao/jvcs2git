@@ -68,7 +68,7 @@ checks the CRC32 **before** any conversion, and:
 - binary `.dfm`/`.fmx` (`TPF0`) → text with `ObjectBinaryToText` (unless `-nodfmtext`); on failure the binary
   is kept and counted in `dfmConvertFailed`;
 - CRC mismatch → skipped (`crcMismatch`) unless `-ignorecrc`;
-- no content → `noBlob`; encrypted without key → `encrypted`.
+- blob missing on the server → `noBlob` (a 0-byte file is valid and is written empty); encrypted without key → `encrypted`.
 
 A member that disappears in a revision (e.g. the unit lost its `.dfm`) is deleted in that commit. A member
 skipped by an error keeps its previous content.

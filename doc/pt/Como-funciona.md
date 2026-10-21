@@ -69,7 +69,7 @@ confere o CRC32 **antes** de qualquer conversão e:
 - `.dfm`/`.fmx` binário (`TPF0`) → texto com `ObjectBinaryToText` (salvo `-nodfmtext`); falha → grava o
   binário e conta em `dfmConvertFailed`;
 - CRC divergente → pulado (`crcMismatch`), salvo `-ignorecrc`;
-- sem conteúdo → `noBlob`; cifrado sem chave → `encrypted`.
+- servidor sem o blob → `noBlob` (arquivo de 0 bytes é válido e entra vazio); cifrado sem chave → `encrypted`.
 
 Um membro que some numa revisão (ex.: a unit perdeu o `.dfm`) é removido no commit correspondente. Um membro
 pulado por erro mantém o conteúdo anterior.

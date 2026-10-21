@@ -88,7 +88,7 @@ anterior. Motivos (`reason`):
   cliente JEDI VCS (Properties → Crypt) ou para usar ele mesmo `-encodekey-file <arquivo>` (fora da pasta de
   saída) e rode de novo (com `-force`, após aprovação). Nunca peça a chave.
 - `crcMismatch`: o conteúdo baixado não confere com o CRC do servidor. Avise; `-ignorecrc` só com aprovação.
-- `noBlob`: o servidor não tem o conteúdo (tamanho 0). Só relatar.
+- `noBlob`: o servidor não devolveu o conteúdo (blob ausente; arquivo de 0 bytes não é `noBlob`, entra vazio). Só relatar.
 - `noMembers`: revisão sem linhas no histórico. Só relatar.
 - `noCommit`: label sem nenhum commit emitido (tag não criada). Só relatar.
 - `dfmNotConverted`: `.dfm` binário que não converteu para texto; foi gravado binário. Só relatar.
